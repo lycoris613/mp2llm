@@ -1,0 +1,33 @@
+{
+  "findingId": 9002,
+  "promptVersion": "v1.0",
+  "rule": {
+    "ruleId": "SQLI-003",
+    "vulnerabilityType": "SQL_INJECTION",
+    "cweId": "CWE-89",
+    "severity": "CRITICAL",
+    "title": "템플릿 리터럴 SQL 삽입",
+    "description": "SQL 문자열 안에서 ${} 보간으로 외부 입력을 직접 결합하고 있습니다."
+  },
+  "location": {
+    "relativePath": "src/routes/orders.ts",
+    "language": "TypeScript",
+    "startLine": 6,
+    "endLine": 6
+  },
+  "codeContext": {
+    "startLine": 1,
+    "endLine": 9,
+    "lines": [
+      "1: import db from './database';",
+      "2: ",
+      "3: const TABLE = 'orders';  // 서버 상수, 사용자 입력 아님",
+      "4: ",
+      "5: app.get('/api/orders', async (req, res) => {",
+      "6:   const query = `SELECT * FROM ${TABLE} WHERE id = $1`;",
+      "7:   const result = await db.query(query, [req.query.id]);",
+      "8:   res.json(result.rows);",
+      "9: });"
+    ]
+  }
+}

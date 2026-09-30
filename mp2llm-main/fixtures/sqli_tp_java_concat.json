@@ -1,0 +1,33 @@
+{
+  "findingId": 9003,
+  "promptVersion": "v1.0",
+  "rule": {
+    "ruleId": "SQLI-001",
+    "vulnerabilityType": "SQL_INJECTION",
+    "cweId": "CWE-89",
+    "severity": "CRITICAL",
+    "title": "SQL 문자열 결합",
+    "description": "SQL 문자열에 + 연산자로 변수를 직접 결합하고 있습니다."
+  },
+  "location": {
+    "relativePath": "src/main/java/UserDao.java",
+    "language": "Java",
+    "startLine": 4,
+    "endLine": 4
+  },
+  "codeContext": {
+    "startLine": 1,
+    "endLine": 9,
+    "lines": [
+      "1: public class UserDao {",
+      "2:     public User findByName(HttpServletRequest req) throws SQLException {",
+      "3:         String name = req.getParameter(\"name\");",
+      "4:         String sql = \"SELECT * FROM users WHERE name = '\" + name + \"'\";",
+      "5:         Statement st = conn.createStatement();",
+      "6:         ResultSet rs = st.executeQuery(sql);",
+      "7:         return map(rs);",
+      "8:     }",
+      "9: }"
+    ]
+  }
+}

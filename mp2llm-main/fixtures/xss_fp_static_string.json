@@ -1,0 +1,26 @@
+{
+  "findingId": 9008,
+  "promptVersion": "v1.0",
+  "rule": {
+    "ruleId": "XSS-001",
+    "vulnerabilityType": "XSS",
+    "cweId": "CWE-79",
+    "severity": "HIGH",
+    "title": "innerHTML 에 변수 대입",
+    "description": "innerHTML/outerHTML 에 변수 값이 그대로 대입되고 있습니다."
+  },
+  "location": {
+    "relativePath": "public/status.js",
+    "language": "JavaScript",
+    "startLine": 2,
+    "endLine": 2
+  },
+  "codeContext": {
+    "startLine": 1,
+    "endLine": 2,
+    "lines": [
+      "1: const box = document.getElementById('status');",
+      "2: box.innerHTML = \"<b>Loading...</b>\";"
+    ]
+  }
+}

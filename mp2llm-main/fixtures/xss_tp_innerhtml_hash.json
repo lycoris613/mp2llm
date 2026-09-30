@@ -1,0 +1,27 @@
+{
+  "findingId": 9007,
+  "promptVersion": "v1.0",
+  "rule": {
+    "ruleId": "XSS-001",
+    "vulnerabilityType": "XSS",
+    "cweId": "CWE-79",
+    "severity": "HIGH",
+    "title": "innerHTML 에 변수 대입",
+    "description": "innerHTML/outerHTML 에 변수 값이 그대로 대입되고 있습니다."
+  },
+  "location": {
+    "relativePath": "public/welcome.js",
+    "language": "JavaScript",
+    "startLine": 3,
+    "endLine": 3
+  },
+  "codeContext": {
+    "startLine": 1,
+    "endLine": 3,
+    "lines": [
+      "1: const name = decodeURIComponent(location.hash.slice(1));",
+      "2: const box = document.getElementById('welcome');",
+      "3: box.innerHTML = '환영합니다, ' + name;"
+    ]
+  }
+}

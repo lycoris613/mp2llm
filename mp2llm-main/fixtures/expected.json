@@ -1,0 +1,14 @@
+{
+  "sqli_tp_js_template.json": "TRUE_POSITIVE",
+  "sqli_fp_const_table_bind.json": "FALSE_POSITIVE",
+  "sqli_tp_java_concat.json": "TRUE_POSITIVE",
+  "secret_tp_java_password.json": "TRUE_POSITIVE",
+  "secret_fp_placeholder.json": "FALSE_POSITIVE",
+  "secret_tp_aws_key.json": "TRUE_POSITIVE",
+  "xss_tp_innerhtml_hash.json": "TRUE_POSITIVE",
+  "xss_fp_static_string.json": "FALSE_POSITIVE",
+  "xss_fp_dompurify_react.json": [
+    "FALSE_POSITIVE",
+    "UNCERTAIN"
+  ]
+}
