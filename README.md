@@ -10,6 +10,8 @@ Copy-Item .env.example .env
 .venv\Scripts\python -m uvicorn app.main:app --env-file .env --host 127.0.0.1 --port 8000
 ```
 
+Swagger에서 테스트할 때는 `http://127.0.0.1:8000/docs`의 **Authorize**에서 `InternalToken`에 `.env`의 `INTERNAL_SHARED_SECRET` 값(예: `local-dev`)을 입력한 뒤 `POST /internal/llm/explain`을 실행한다. `.env` 값을 바꾼 뒤에는 Uvicorn을 재시작한다.
+
 | 메서드 | 경로                    | 용도                            |
 | ------ | ----------------------- | ------------------------------- |
 | POST   | `/internal/llm/explain` | 취약점 1건 설명 (설계서 §4.5.1) |

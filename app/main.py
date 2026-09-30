@@ -4,10 +4,9 @@ import hmac
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Security
 from fastapi.responses import JSONResponse
+from fastapi.security import APIKeyHeader
 from pydantic import ValidationError
 
 from .schemas import ExplainRequest, ExplainResponse, HealthResponse, LLMContent, Verdict
@@ -23,7 +22,26 @@ from .llm_client import (
 )
 
 
+# 로컬 --reload 자식 프로세스가 부모의 이전 --env-file 값을 상속해도 최신 .env를 사용한다.
+load_dotenv(override=True)
+
 app = FastAPI(title="CodeGuard AI LLM Internal API", version=PROMPT_VERSION)
+internal_token_header = APIKeyHeader(
+    name="X-Internal-Token",
+    scheme_name="InternalToken",
+    description="Spring Boot와 공유하는 INTERNAL_SHARED_SECRET",
+    auto_error=False,
+)
+
+
+async def verify_internal_token(
+    x_internal_token: str | None = Security(internal_token_header),
+) -> None:
+    shared_secret = os.getenv("INTERNAL_SHARED_SECRET", "")
+    if not shared_secret:
+        raise HTTPException(status_code=503, detail="Internal token is not configured")
+    if not x_internal_token or not hmac.compare_digest(x_internal_token, shared_secret):
+        raise HTTPException(status_code=401, detail="Invalid internal token")
 
 # §4.5.2 - 헬스체크
 @app.get("/internal/llm/health", response_model=HealthResponse)
@@ -32,17 +50,14 @@ async def health() -> HealthResponse:
     return HealthResponse(model=model)
 
 # §4.5.1 - Internal API 계약
-@app.post("/internal/llm/explain", response_model=ExplainResponse)
+@app.post(
+    "/internal/llm/explain",
+    response_model=ExplainResponse,
+    dependencies=[Depends(verify_internal_token)],
+)
 async def explain(
     finding: ExplainRequest,
-    x_internal_token: str | None = Header(default=None, alias="X-Internal-Token"),
 ):
-    shared_secret = os.getenv("INTERNAL_SHARED_SECRET", "")
-    if not shared_secret:
-        raise HTTPException(status_code=503, detail="Internal token is not configured")
-    if not x_internal_token or not hmac.compare_digest(x_internal_token, shared_secret):
-        raise HTTPException(status_code=401, detail="Invalid internal token")
-
     try:
         client = create_client(Settings.from_env())
     except LLMConfigurationError:
