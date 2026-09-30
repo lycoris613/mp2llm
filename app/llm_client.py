@@ -10,11 +10,11 @@ from google import genai
 from google.genai import errors as genai_errors
 from google.genai import types
 
-from .schemas import ExplainRequest
+from .schemas import ExplainRequest, LLMContent
 
 
 PROMPT_VERSION = "v1.0"
-DEFAULT_MODEL = "gemini-3.8-flash"
+DEFAULT_MODEL = "gemini-3.5-flash-lite"
 
 SYSTEM_PROMPT = """당신은 보안 코드 리뷰어입니다. Scanner가 이미 탐지한 취약점 한 건만 설명하세요.
 새 취약점을 찾거나 탐지 유형, 위치, 심각도를 변경하지 마세요.
@@ -107,6 +107,7 @@ class GeminiClient:
                         system_instruction=system,
                         max_output_tokens=self.settings.gemini_max_output_tokens,
                         response_mime_type="application/json",
+                        response_schema=LLMContent,
                         temperature=0.2,
                     ),
                 )

@@ -54,6 +54,12 @@ async def health() -> HealthResponse:
     "/internal/llm/explain",
     response_model=ExplainResponse,
     dependencies=[Depends(verify_internal_token)],
+    responses={
+        401: {"description": "Invalid internal token"},
+        502: {"description": "Gemini service unavailable"},
+        503: {"description": "LLM configuration missing"},
+        504: {"description": "LLM request timed out"},
+    },
 )
 async def explain(
     finding: ExplainRequest,

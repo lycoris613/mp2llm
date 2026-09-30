@@ -26,6 +26,6 @@ Swagger에서 테스트할 때는 `http://127.0.0.1:8000/docs`의 **Authorize**�
 
 ## LLM 공급자
 
-Google Gemini (`google-genai` SDK). 기본 모델은 `gemini-3.8-flash`이며 `.env` 의 `GEMINI_MODEL` 로 바꿀 수 있다.
+Google Gemini (`google-genai` SDK). 기본 모델은 `gemini-3.5-flash-lite`이며 `.env` 의 `GEMINI_MODEL` 로 바꿀 수 있다.
 `response_mime_type="application/json"` 으로 JSON 출력을 요청하고 Pydantic으로 응답 필드를 검증한다.
 `LLM_PROVIDER=mock` 이면 API 키 없이 고정 응답이 나온다.
