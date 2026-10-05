@@ -9,7 +9,7 @@
 PROMPT_VERSION = "v1.0"
 
 # ── 모델 (.env 의 GEMINI_MODEL 이 우선한다) ───────────────
-DEFAULT_MODEL = "gemini-3.5-flash-lite"   # .env.example 과 동일하게 유지
+DEFAULT_MODEL = "gemini-3.5-flash-lite"   # llm_client.py 가 이 값을 사용한다. .env.example 과 동일하게 유지
 TEMPERATURE = 0.2                         # 설명 톤은 일정하게, 판정은 흔들리지 않게
 MAX_OUTPUT_TOKENS = 2048
 

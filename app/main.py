@@ -2,6 +2,7 @@
 
 import hmac
 import os
+import re
 from dotenv import load_dotenv
 
 from fastapi import Depends, FastAPI, HTTPException, Security
@@ -34,6 +35,15 @@ internal_token_header = APIKeyHeader(
 )
 
 
+_CODE_FENCE = re.compile(r"^```(?:json)?\s*(.*?)\s*```$", re.DOTALL)
+
+
+def _strip_code_fence(text: str) -> str:
+    """모델이 JSON 을 ```json ... ``` 로 감싸 답해도 검증은 통과시킨다. rawResponse 에는 원문을 그대로 둔다."""
+    match = _CODE_FENCE.match(text.strip())
+    return match.group(1) if match else text
+
+
 async def verify_internal_token(
     x_internal_token: str | None = Security(internal_token_header),
 ) -> None:
@@ -54,6 +64,12 @@ async def health() -> HealthResponse:
     "/internal/llm/explain",
     response_model=ExplainResponse,
     dependencies=[Depends(verify_internal_token)],
+    responses={
+        401: {"description": "Invalid internal token"},
+        502: {"description": "Gemini service unavailable"},
+        503: {"description": "LLM configuration missing"},
+        504: {"description": "LLM request timed out"},
+    },
 )
 async def explain(
     finding: ExplainRequest,
@@ -67,7 +83,7 @@ async def explain(
     for _ in range(2):
         try:
             reply = await client.generate(finding)
-            content = LLMContent.model_validate_json(reply.text)
+            content = LLMContent.model_validate_json(_strip_code_fence(reply.text))
         except LLMSchemaError as exc:
             raw_response = exc.raw_response
         except ValidationError:
